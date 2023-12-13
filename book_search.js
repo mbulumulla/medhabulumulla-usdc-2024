@@ -28,10 +28,9 @@
     };
 
     // checks if the searchTerm is string or else returns empty result
-    if(typeof searchTerm !== 'string' && scannedTextObj.length == 0 ) {
+    if(typeof searchTerm !== 'string' && searchTerm == '' && scannedTextObj.length == 0 ) {
         return result; 
     }
-
     
     // iterate through books
     for (var b=0; b< scannedTextObj.length; b++) {
@@ -56,16 +55,17 @@
                     continuedWord = "";
                 } 
                 
-                if(typeof words[w] !== 'string' || words[w]== "" ) {
-                    
-                } else if(w == words.length-1 && words[w].endsWith("-")) {
-                    // check if there's a hypen, so the word continues
-                    continuedWord = words[w].slice(0, -1) ;
-                } else if(words[w] == searchTerm) {
-                    // add to results
-                    results.push(addToResults(results, bookInfo.ISBN, content.Page, content.Line) );
+                // make sure the word is a string and not empty
+                if(typeof words[w] == 'string' || words[w] !== "" ) {
+                    if(w == words.length-1 && words[w].endsWith("-")) {
+                        // check if there's a hypen, so the word continues
+                        continuedWord = words[w].slice(0, -1) ;
+                    } else if(words[w].replace(".", "").replace("?", "") == searchTerm) {
+                        // add to results
+                        results.push(addToResults(results, bookInfo.ISBN, content.Page, content.Line) );
+                    } 
                 } 
-            }  
+            } 
 
         }
 
@@ -106,7 +106,7 @@ const twentyLeaguesIn = [
             {
                 "Page": 31,
                 "Line": 11,
-                "Text": "what year it was"
+                "Text": "what year it was going to be."
             } 
         ] 
     }
@@ -165,9 +165,16 @@ const noBooksOut = {
     "Results": [ ]
 }
 
-const noResult = {
+const noResultCoding = {
     "SearchTerm": "coding",
     "Results": []
+}
+const noResultBe = {
+    "SearchTerm": "be",
+    "Results": [{
+        "ISBN": "9780000528531", 
+        "Page": 31, 
+        "Line": 11}]
 }
 const noResultOrSearch = {
     "SearchTerm": "",
@@ -261,21 +268,12 @@ if (JSON.stringify(noBooksOut) === JSON.stringify(test5result)) {
 
 
 const test6result = findSearchTermInBooks("coding", twentyLeaguesIn);
-if (JSON.stringify(noResult) === JSON.stringify(test6result)) {
+if (JSON.stringify(noResultCoding) === JSON.stringify(test6result)) {
     console.log("PASS: No Result");
 } else {
     console.log("FAIL: No Result");
-    console.log("Expected:", noResult);
+    console.log("Expected:", noResultCoding);
     console.log("Received:", test6result);
-}
-
-const test7result = findSearchTermInBooks("", twentyLeaguesIn);
-if (JSON.stringify(noResultOrSearch) === JSON.stringify(test7result)) {
-    console.log("PASS: No Result or Search Term");
-} else {
-    console.log("FAIL: No Result");
-    console.log("Expected:", noResultOrSearch);
-    console.log("Received:", test7result);
 }
 
 const test8result = findSearchTermInBooks("was", twentyLeaguesIn);
@@ -287,5 +285,13 @@ if (JSON.stringify(twentyLeaguesMultipleOut) === JSON.stringify(test8result)) {
     console.log("Received:", test8result);
 }
 
+const test9result = findSearchTermInBooks("be", twentyLeaguesIn);
+if (JSON.stringify(noResultBe) === JSON.stringify(test9result)) {
+    console.log("PASS: Punctuation at end");
+} else {
+    console.log("FAIL: Punctuation at end");
+    console.log("Expected:", noResultBe);
+    console.log("Received:", test9result);
+}
 
 
