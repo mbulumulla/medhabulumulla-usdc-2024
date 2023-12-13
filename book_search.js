@@ -23,7 +23,7 @@
      * return the appropriate object here. */
     var results = []
     var result = {
-        "SearchTerm": "",
+        "SearchTerm": searchTerm,
         "Results": results
     };
 
@@ -45,29 +45,35 @@
         var bookISBN = bookInfo.ISBN;
 
         // iterate through content
+        var continuedWord = "";
+
         for (var i=0; i< bookInfo.Content.length; i++) {
             content = bookInfo.Content[i];
             console.log("  Line:",content);
             var lineNum = content.Line;
             var pageNum = content.Page;
-
             var words = content.Text.split(" ");
-            var continuedWord = "";
             
             for (var w =0; w<words.length; w++) {
-                // check if it's empty or there's no words there
                 // console.log(words[w]);
-                if (w == 0) {
-                    words[0] = words[0] + continuedWord;
-                } else if(typeof words[w] !== 'string' || words[w]== "" ) {
+                // continued words
+                if (continuedWord !== "") {
+                    words[0] =  continuedWord + words[0];
+                    console.log("COMBINED WORD: ", words[0]);
+                    continuedWord = "";
+                } 
+                 // check if it's empty or there's no words there
+                if(typeof words[w] !== 'string' || words[w]== "" ) {
                     console.log("Not a word:", words[w]);
                     // continue
                 } else if(w == words.length-1 && words[w].endsWith("-")) {
                     // set continued word
-                    continuedWord = words[w].substring(0, continuedWord.length - 1);
+                    continuedWord = words[w].slice(0, -1) ;
+                    console.log("before hypen",continuedWord);
                 } else if(words[w] == searchTerm) {
                     // add to results
                     console.log("found word: ", words[w]);
+                    addToResults(results, bookISBN, pageNum, lineNum);
                 } else {
                     
                     // console.log(words[w]);
@@ -79,6 +85,16 @@
     }
     
     return result; 
+}
+
+function addToResults(results, isbn, page, line ) {
+    results.push(
+        {
+            "ISBN": isbn,
+            "Page": page,
+            "Line": line
+        }
+    );
 }
 
 /** Example input object. */
