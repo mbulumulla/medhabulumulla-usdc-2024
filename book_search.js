@@ -37,7 +37,7 @@
         bookInfo = scannedTextObj[b];
 
         // checks if the primary component of the book are correct types, or else continues to the next book
-        if(typeof bookInfo.Title !== 'string' || typeof bookInfo.ISBN !== 'string') {
+        if(typeof bookInfo.Title !== 'string' || typeof bookInfo.ISBN !== 'string' || isNaN(parseInt(bookInfo.ISBN))) {
             return result;
         }
 
@@ -66,9 +66,7 @@
                     } 
                 } 
             } 
-
         }
-
     }
     
     return result; 
@@ -257,7 +255,8 @@ if (JSON.stringify(noBooksOut) === JSON.stringify(test4result)) {
 
 
 // Book with an invalid ISBN Number (it's a string)
-const test5result = findSearchTermInBooks("darkness", noBooks);
+
+const test5result = findSearchTermInBooks("darkness", twentyLeaguesIncorrectISBNIn);
 if (JSON.stringify(noBooksOut) === JSON.stringify(test5result)) {
     console.log("PASS: Invalid ISBN Number");
 } else {
