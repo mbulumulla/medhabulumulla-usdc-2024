@@ -27,7 +27,6 @@
         "Results": results
     };
 
-    console.log("length", scannedTextObj.length);
     // checks if the searchTerm is string or else returns empty result
     if(typeof searchTerm !== 'string' && scannedTextObj.length == 0 ) {
         return result; 
@@ -134,8 +133,6 @@ const twentyLeaguesIncorrectISBNIn = [
     }
 ]
 const noBooks = [ ];
-
-
     
 /** Example output object */
 const twentyLeaguesOut = {
@@ -160,22 +157,19 @@ const twentyLeaguesOut3 = {
     ]
 }
 
-const twentyLeaguesOut4 = {
-    "SearchTerm": "darkness",
-    "Results": [
-        {
-            "ISBN": "9780000528531",
-            "Page": 31,
-            "Line": 9
-        }
-    ]
-}
-
 const noBooksOut = {
     "SearchTerm": "darkness",
     "Results": [ ]
 }
 
+const noResult = {
+    "SearchTerm": "coding",
+    "Results": []
+}
+const noResultOrSearch = {
+    "SearchTerm": "",
+    "Results": []
+}
 
 /*
  _   _ _   _ ___ _____   _____ _____ ____ _____ ____  
@@ -219,9 +213,9 @@ if (test2result.Results.length == 1) {
 // Finding a word in a hypen
 const test3result = findSearchTermInBooks("darkness", twentyLeaguesIn);
 if (JSON.stringify(twentyLeaguesOut3) === JSON.stringify(test3result)) {
-    console.log("PASS: Test 3");
+    console.log("PASS: Hypen word");
 } else {
-    console.log("FAIL: Test 3");
+    console.log("FAIL: Hypen word");
     console.log("Expected:", twentyLeaguesOut3);
     console.log("Received:", test3result);
 }
@@ -229,9 +223,9 @@ if (JSON.stringify(twentyLeaguesOut3) === JSON.stringify(test3result)) {
 // No Books inputted
 const test4result = findSearchTermInBooks("darkness", noBooks);
 if (JSON.stringify(noBooksOut) === JSON.stringify(test4result)) {
-    console.log("PASS: Test 4");
+    console.log("PASS: No Books Inputted");
 } else {
-    console.log("FAIL: Test 4");
+    console.log("FAIL: No Books Inputted");
     console.log("Expected:", noBooksOut);
     console.log("Received:", test4result);
 }
@@ -240,11 +234,31 @@ if (JSON.stringify(noBooksOut) === JSON.stringify(test4result)) {
 // Book with an invalid ISBN Number (it's a string)
 const test5result = findSearchTermInBooks("darkness", noBooks);
 if (JSON.stringify(noBooksOut) === JSON.stringify(test5result)) {
-    console.log("PASS: Test 5");
+    console.log("PASS: Invalid ISBN Number");
 } else {
-    console.log("FAIL: Test 5");
+    console.log("FAIL: Invalid ISBN Number");
     console.log("Expected:", noBooksOut);
     console.log("Received:", test5result);
 }
+
+
+const test6result = findSearchTermInBooks("coding", twentyLeaguesIn);
+if (JSON.stringify(noResult) === JSON.stringify(test6result)) {
+    console.log("PASS: No Result");
+} else {
+    console.log("FAIL: No Result");
+    console.log("Expected:", noResult);
+    console.log("Received:", test6result);
+}
+
+const test7result = findSearchTermInBooks("", twentyLeaguesIn);
+if (JSON.stringify(noResultOrSearch) === JSON.stringify(test7result)) {
+    console.log("PASS: No Result or Search Term");
+} else {
+    console.log("FAIL: No Result");
+    console.log("Expected:", noResultOrSearch);
+    console.log("Received:", test7result);
+}
+
 
 
