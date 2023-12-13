@@ -64,9 +64,7 @@
                 } else if(words[w] == searchTerm) {
                     // add to results
                     results.push(addToResults(results, bookInfo.ISBN, content.Page, content.Line) );
-                } else { 
-                    // console.log(words[w]);
-                }
+                } 
             }  
 
         }
@@ -104,6 +102,11 @@ const twentyLeaguesIn = [
                 "Page": 31,
                 "Line": 10,
                 "Text": "eyes were, I asked myself how he had managed to see, and"
+            }, 
+            {
+                "Page": 31,
+                "Line": 11,
+                "Text": "what year it was"
             } 
         ] 
     }
@@ -169,6 +172,21 @@ const noResult = {
 const noResultOrSearch = {
     "SearchTerm": "",
     "Results": []
+}
+const twentyLeaguesMultipleOut = {
+    "SearchTerm": "was",
+    "Results": [
+        {
+            "ISBN": "9780000528531",
+            "Page": 31,
+            "Line": 9
+        },
+        {
+            "ISBN": "9780000528531",
+            "Page": 31,
+            "Line": 11
+        }
+    ]
 }
 
 /*
@@ -258,6 +276,15 @@ if (JSON.stringify(noResultOrSearch) === JSON.stringify(test7result)) {
     console.log("FAIL: No Result");
     console.log("Expected:", noResultOrSearch);
     console.log("Received:", test7result);
+}
+
+const test8result = findSearchTermInBooks("was", twentyLeaguesIn);
+if (JSON.stringify(twentyLeaguesMultipleOut) === JSON.stringify(test8result)) {
+    console.log("PASS: Multiple words");
+} else {
+    console.log("FAIL: Multiple words");
+    console.log("Expected:", twentyLeaguesMultipleOut);
+    console.log("Received:", test8result);
 }
 
 
