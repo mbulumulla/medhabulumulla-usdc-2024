@@ -27,55 +27,45 @@
         "Results": results
     };
 
+    console.log("length", scannedTextObj.length);
     // checks if the searchTerm is string or else returns empty result
-    if(typeof searchTerm !== 'string') {
+    if(typeof searchTerm !== 'string' && scannedTextObj.length == 0 ) {
         return result; 
     }
+
     
-    // scannedTextObj.forEach((bookInfo)=> {
+    // iterate through books
     for (var b=0; b< scannedTextObj.length; b++) {
         bookInfo = scannedTextObj[b];
 
         // checks if the primary component of the book are correct types, or else continues to the next book
         if(typeof bookInfo.Title !== 'string' || typeof bookInfo.ISBN !== 'string') {
-            return;
+            return result;
         }
-        console.log("Book:", bookInfo);
-        var bookTitle = bookInfo.Title;
-        var bookISBN = bookInfo.ISBN;
 
         // iterate through content
         var continuedWord = "";
 
         for (var i=0; i< bookInfo.Content.length; i++) {
             content = bookInfo.Content[i];
-            console.log("  Line:",content);
-            var lineNum = content.Line;
-            var pageNum = content.Page;
             var words = content.Text.split(" ");
             
             for (var w =0; w<words.length; w++) {
-                // console.log(words[w]);
-                // continued words
+                // The previous line had a hypen, need to continue the word
                 if (continuedWord !== "") {
                     words[0] =  continuedWord + words[0];
-                    console.log("COMBINED WORD: ", words[0]);
                     continuedWord = "";
                 } 
-                 // check if it's empty or there's no words there
+                
                 if(typeof words[w] !== 'string' || words[w]== "" ) {
-                    console.log("Not a word:", words[w]);
-                    // continue
+                    
                 } else if(w == words.length-1 && words[w].endsWith("-")) {
-                    // set continued word
+                    // check if there's a hypen, so the word continues
                     continuedWord = words[w].slice(0, -1) ;
-                    console.log("before hypen",continuedWord);
                 } else if(words[w] == searchTerm) {
                     // add to results
-                    console.log("found word: ", words[w]);
-                    addToResults(results, bookISBN, pageNum, lineNum);
-                } else {
-                    
+                    results.push(addToResults(results, bookInfo.ISBN, content.Page, content.Line) );
+                } else { 
                     // console.log(words[w]);
                 }
             }  
@@ -88,13 +78,11 @@
 }
 
 function addToResults(results, isbn, page, line ) {
-    results.push(
-        {
+    return {
             "ISBN": isbn,
             "Page": page,
             "Line": line
-        }
-    );
+        };
 }
 
 /** Example input object. */
@@ -121,6 +109,33 @@ const twentyLeaguesIn = [
         ] 
     }
 ]
+
+const twentyLeaguesIncorrectISBNIn = [
+    {
+        "Title": "Twenty Thousand Leagues Under the Sea",
+        "ISBN": "hi",
+        "Content": [
+            {
+                "Page": 31,
+                "Line": 8,
+                "Text": "now simply went on by her own momentum.  The dark-"
+            },
+            {
+                "Page": 31,
+                "Line": 9,
+                "Text": "ness was then profound; and however good the Canadian\'s"
+            },
+            {
+                "Page": 31,
+                "Line": 10,
+                "Text": "eyes were, I asked myself how he had managed to see, and"
+            } 
+        ] 
+    }
+]
+const noBooks = [ ];
+
+
     
 /** Example output object */
 const twentyLeaguesOut = {
@@ -134,16 +149,33 @@ const twentyLeaguesOut = {
     ]
 }
 
-const twentyLeaguesOut2 = {
+const twentyLeaguesOut3 = {
     "SearchTerm": "darkness",
     "Results": [
         {
             "ISBN": "9780000528531",
             "Page": 31,
-            "Line": 8
+            "Line": 9
         }
     ]
 }
+
+const twentyLeaguesOut4 = {
+    "SearchTerm": "darkness",
+    "Results": [
+        {
+            "ISBN": "9780000528531",
+            "Page": 31,
+            "Line": 9
+        }
+    ]
+}
+
+const noBooksOut = {
+    "SearchTerm": "darkness",
+    "Results": [ ]
+}
+
 
 /*
  _   _ _   _ ___ _____   _____ _____ ____ _____ ____  
@@ -165,30 +197,54 @@ const twentyLeaguesOut2 = {
 
 
 
-// const test1result = findSearchTermInBooks("the", twentyLeaguesIn);
-// if (JSON.stringify(twentyLeaguesOut) === JSON.stringify(test1result)) {
-//     console.log("PASS: Test 1");
-// } else {
-//     console.log("FAIL: Test 1");
-//     console.log("Expected:", twentyLeaguesOut);
-//     console.log("Received:", test1result);
-// }
+const test1result = findSearchTermInBooks("the", twentyLeaguesIn);
+if (JSON.stringify(twentyLeaguesOut) === JSON.stringify(test1result)) {
+    console.log("PASS: Test 1");
+} else {
+    console.log("FAIL: Test 1");
+    console.log("Expected:", twentyLeaguesOut);
+    console.log("Received:", test1result);
+}
 
-// /** We could choose to check that we get the right number of results. */
-// const test2result = findSearchTermInBooks("the", twentyLeaguesIn); 
-// if (test2result.Results.length == 1) {
-//     console.log("PASS: Test 2");
-// } else {
-//     console.log("FAIL: Test 2");
-//     console.log("Expected:", twentyLeaguesOut.Results.length);
-//     console.log("Received:", test2result.Results.length);
-// }
+/** We could choose to check that we get the right number of results. */
+const test2result = findSearchTermInBooks("the", twentyLeaguesIn); 
+if (test2result.Results.length == 1) {
+    console.log("PASS: Test 2");
+} else {
+    console.log("FAIL: Test 2");
+    console.log("Expected:", twentyLeaguesOut.Results.length);
+    console.log("Received:", test2result.Results.length);
+}
 
+// Finding a word in a hypen
 const test3result = findSearchTermInBooks("darkness", twentyLeaguesIn);
-if (JSON.stringify(twentyLeaguesOut2) === JSON.stringify(test3result)) {
+if (JSON.stringify(twentyLeaguesOut3) === JSON.stringify(test3result)) {
     console.log("PASS: Test 3");
 } else {
     console.log("FAIL: Test 3");
-    console.log("Expected:", twentyLeaguesOut2);
+    console.log("Expected:", twentyLeaguesOut3);
     console.log("Received:", test3result);
 }
+
+// No Books inputted
+const test4result = findSearchTermInBooks("darkness", noBooks);
+if (JSON.stringify(noBooksOut) === JSON.stringify(test4result)) {
+    console.log("PASS: Test 4");
+} else {
+    console.log("FAIL: Test 4");
+    console.log("Expected:", noBooksOut);
+    console.log("Received:", test4result);
+}
+
+
+// Book with an invalid ISBN Number (it's a string)
+const test5result = findSearchTermInBooks("darkness", noBooks);
+if (JSON.stringify(noBooksOut) === JSON.stringify(test5result)) {
+    console.log("PASS: Test 5");
+} else {
+    console.log("FAIL: Test 5");
+    console.log("Expected:", noBooksOut);
+    console.log("Received:", test5result);
+}
+
+
